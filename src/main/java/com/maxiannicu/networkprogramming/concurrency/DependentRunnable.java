@@ -18,10 +18,19 @@ public class DependentRunnable implements Runnable {
         this.releaseNumber = releaseNumber;
     }
 
+    /**
+     * Adds dependency to another Runnable
+     * @param dependentRunnable
+     */
     public void addDependency(DependentRunnable dependentRunnable){
-        dependencies.add(dependentRunnable);
+        synchronized (dependencies) {
+            dependencies.add(dependentRunnable);
+        }
     }
 
+    /**
+     * Wait thread to finish and aquire a permission
+     */
     public void waitToFinish() {
         try {
             semaphore.acquire();
@@ -32,7 +41,7 @@ public class DependentRunnable implements Runnable {
 
     @Override
     public void run() {
-        dependencies.forEach(DependentRunnable::waitToFinish);
+        waitAllDependenciesToFinish();
         try {
             Thread.sleep(getRandomTimeToWait());
             System.out.printf("Finishing execution %s\n",title);
@@ -43,6 +52,19 @@ public class DependentRunnable implements Runnable {
         }
     }
 
+    /**
+     * Waits for all dependencies to finish their execution.
+     */
+    private void waitAllDependenciesToFinish() {
+        synchronized (dependencies) {
+            dependencies.forEach(DependentRunnable::waitToFinish);
+        }
+    }
+
+    /**
+     * Gets random number
+     * @return random number between 0 and 4000
+     */
     private long getRandomTimeToWait() {
         return (long) (Math.random() * 4000);
     }
