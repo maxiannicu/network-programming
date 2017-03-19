@@ -1,31 +1,28 @@
 package com.maxiannicu.networkprogramming;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.maxiannicu.networkprogramming.di.RepositoryModule;
-import com.maxiannicu.networkprogramming.repository.CarRepository;
-
-import java.util.stream.Stream;
+import com.maxiannicu.networkprogramming.concurrency.DependentRunnable;
 
 public class Main {
-    private CarRepository carRepository;
-
-    @Inject
-    public Main(CarRepository carRepository) {
-        this.carRepository = carRepository;
-    }
-
-    public void showCars(){
-        this.carRepository.getAll().forEach(System.out::println);
-    }
-
     public static void main(String[] args){
-        System.out.printf("Arguments count %d\n",args.length);
-        Stream.of(args).forEach(System.out::println);
+        DependentRunnable one = new DependentRunnable("1", 1);
+        DependentRunnable two = new DependentRunnable("2", 2);
+        DependentRunnable three = new DependentRunnable("3", 2);
+        DependentRunnable four = new DependentRunnable("4", 1);
+        DependentRunnable five = new DependentRunnable("5", 1);
+        DependentRunnable six = new DependentRunnable("6", 1);
 
-        Injector injector = Guice.createInjector(new RepositoryModule());
-        Main instance = injector.getInstance(Main.class);
-        instance.showCars();
+        five.addDependency(one);
+        five.addDependency(two);
+        five.addDependency(three);
+        six.addDependency(two);
+        six.addDependency(three);
+        six.addDependency(four);
+
+        new Thread(one).start();
+        new Thread(two).start();
+        new Thread(three).start();
+        new Thread(four).start();
+        new Thread(five).start();
+        new Thread(six).start();
     }
 }
