@@ -43,8 +43,9 @@ public class DependentRunnable implements Runnable {
     public void run() {
         waitAllDependenciesToFinish();
         try {
-            Thread.sleep(getRandomTimeToWait());
-            System.out.printf("Finishing execution %s\n",title);
+            long randomTimeToWait = getRandomTimeToWait();
+            Thread.sleep(randomTimeToWait);
+            System.out.printf("Execution finished for %s in %d millis\n",title,randomTimeToWait);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
