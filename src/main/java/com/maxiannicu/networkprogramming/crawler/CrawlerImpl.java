@@ -52,7 +52,7 @@ public class CrawlerImpl implements Crawler {
             String url = queue.poll();
             try {
                 String content = webClient.get(url);
-                crawle(set, content);
+                crawle(url,set, content);
             } catch (IOException e) {
 
             }
@@ -61,18 +61,18 @@ public class CrawlerImpl implements Crawler {
         return set;
     }
 
-    private void crawle(Set<String> set, String content) {
+    private void crawle(String url,Set<String> set, String content) {
         Document parse = Jsoup.parse(content);
         Elements aElements = parse.select("a[href]");
         for (Element element : aElements) {
-            String cleanUrl = getCleanUrl(element);
+            String cleanUrl = getCleanUrl(url,element);
             if (cleanUrl != null && cleanUrl.startsWith(baseUrl)) {
                 set.add(cleanUrl);
             }
         }
     }
 
-    private String getCleanUrl(Element element) {
+    private String getCleanUrl(String url,Element element) {
         String href = element.attr("href").toLowerCase();
         try {
             if (!href.startsWith("http")) {
@@ -81,18 +81,12 @@ public class CrawlerImpl implements Crawler {
                 if (href.startsWith("/"))
                     href = String.format("%s%s", baseUrl, href);
                 else
-                    href = String.format("%s/%s",baseUrl,href);
+                    href = String.format("%s%s",url,href);
             }
         } catch (URISyntaxException e) {
             return null;
         }
         return getUrlWithoutQuery(href);
-    }
-
-    private String getHostName(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-
-        return uri.getHost();
     }
 
     private String getUrlWithoutQuery(String url){
