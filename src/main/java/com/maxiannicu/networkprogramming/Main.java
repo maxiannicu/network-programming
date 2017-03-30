@@ -1,28 +1,40 @@
 package com.maxiannicu.networkprogramming;
 
-import com.maxiannicu.networkprogramming.concurrency.DependentRunnable;
+
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.maxiannicu.networkprogramming.crawler.Crawler;
+import com.maxiannicu.networkprogramming.di.CrawlerModule;
+
+import java.util.Scanner;
+import java.util.Set;
 
 public class Main {
+    private final Crawler crawler;
+
+    @Inject
+    public Main(Crawler crawler) {
+        this.crawler = crawler;
+    }
+
+    public void run(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please enter url to scan : ");
+        String url = scanner.next();
+        System.out.print("Please enter depth to scan : ");
+        int depth = scanner.nextInt();
+        Set<String> paths = crawler.crawle(url, depth);
+        System.out.println("Here are all paths:");
+        for (String path : paths){
+            System.out.println(path);
+        }
+        System.out.printf("Total found %d links",paths.size());
+    }
+
     public static void main(String[] args){
-        DependentRunnable one = new DependentRunnable("1", 1);
-        DependentRunnable two = new DependentRunnable("2", 2);
-        DependentRunnable three = new DependentRunnable("3", 2);
-        DependentRunnable four = new DependentRunnable("4", 1);
-        DependentRunnable five = new DependentRunnable("5", 1);
-        DependentRunnable six = new DependentRunnable("6", 1);
-
-        five.addDependency(one);
-        five.addDependency(two);
-        five.addDependency(three);
-        six.addDependency(two);
-        six.addDependency(three);
-        six.addDependency(four);
-
-        new Thread(one).start();
-        new Thread(two).start();
-        new Thread(three).start();
-        new Thread(four).start();
-        new Thread(five).start();
-        new Thread(six).start();
+        Injector injector = Guice.createInjector(new CrawlerModule());
+        Main app = injector.getInstance(Main.class);
+        app.run();
     }
 }
