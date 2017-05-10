@@ -8,9 +8,11 @@ import com.maxiannicu.networkprogramming.mail.receiver.MailReceiver;
 import com.maxiannicu.networkprogramming.mail.sender.MailSender;
 import com.maxiannicu.networkprogramming.utils.Convert;
 
+import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -65,11 +67,13 @@ public class Main {
             System.out.print("To:");
             String to = scanner.next();
 
+            scanner.skip("\n"); //new line skip from buffer
             System.out.print("Subject:");
             String subject = scanner.nextLine();
-
             System.out.print("Message:");
+
             String message = scanner.nextLine();
+
             mailSender.send(to, subject, message);
             System.out.println("Email was sent.");
         } catch (RuntimeException e){
@@ -81,7 +85,16 @@ public class Main {
         try {
             System.out.println();
             System.out.println("From : " + Convert.addressesToString(mail.getFrom()));
-            System.out.println("Received : "+ mail.getReceivedDate().toString());
+            System.out.println("To : " + Convert.addressesToString(mail.getRecipients(Message.RecipientType.TO)));
+
+            Date receivedDate = mail.getReceivedDate();
+            if(receivedDate != null) {
+                System.out.println("Received : " + receivedDate.toString());
+            }
+            Date sentDate = mail.getSentDate();
+            if(sentDate != null) {
+                System.out.println("Sent : " + sentDate.toString());
+            }
             System.out.println("Subject : " + mail.getSubject());
 
         } catch (MessagingException e){

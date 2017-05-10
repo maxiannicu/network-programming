@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+run{
+    standardInput = System.in
+}
+
 sourceSets {
     main {
         resources {
