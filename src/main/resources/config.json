@@ -1,0 +1,10 @@
+{
+  "smtp.host" : "smtp.gmail.com",
+  "smtp.port" : "465",
+  "smtp.username" : "maxiannicu@gmail.com",
+  "smtp.password" : "ikcqcsmnufkqnzsy",
+  "pop.host" : "pop.gmail.com",
+  "pop.username" : "maxiannicu@gmail.com",
+  "pop.password" : "ikcqcsmnufkqnzsy",
+  "pop.port" : "995"
+}

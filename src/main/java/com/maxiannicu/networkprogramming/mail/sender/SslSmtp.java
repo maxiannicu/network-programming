@@ -11,19 +11,19 @@ import java.util.Properties;
 /**
  * Created by nicu on 5/9/17.
  */
-public class SMTP implements MailSender {
+public class SslSmtp implements MailSender {
     private final Configuration configuration;
 
     private Session instance;
 
     @Inject
-    public SMTP(Configuration configuration) {
+    public SslSmtp(Configuration configuration) {
         this.configuration = configuration;
 
     }
 
     @Override
-    public void send(String to, String subject, String message) {
+    public void send(String to,String subject,String message) {
 
         try {
             Message msg = new MimeMessage(getSession());
